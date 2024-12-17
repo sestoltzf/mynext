@@ -82,20 +82,20 @@ export default function ImageGenerator() {
         <div className="grid grid-cols-2 gap-4 mb-4">
           <button
             onClick={() => setSelectedFormat('landscape')}
-            className={`p-4 border rounded text-center ${
+            className={`p-4 border rounded text-center transition-all ${
               selectedFormat === 'landscape' 
-                ? 'border-blue-500 bg-blue-50' 
-                : 'border-gray-200 hover:bg-gray-50'
+                ? 'bg-[#39705E] text-white border-[#39705E]' 
+                : 'border-[#39705E] text-[#39705E] hover:bg-[#39705E]/10'
             }`}
           >
             1920x1080 (stående format)
           </button>
           <button
             onClick={() => setSelectedFormat('square')}
-            className={`p-4 border rounded text-center ${
+            className={`p-4 border rounded text-center transition-all ${
               selectedFormat === 'square' 
-                ? 'border-blue-500 bg-blue-50' 
-                : 'border-gray-200 hover:bg-gray-50'
+                ? 'bg-[#39705E] text-white border-[#39705E]' 
+                : 'border-[#39705E] text-[#39705E] hover:bg-[#39705E]/10'
             }`}
           >
             1080x1080 (kvadratiskt format)
@@ -110,7 +110,7 @@ export default function ImageGenerator() {
         <select 
           value={prefix}
           onChange={(e) => setPrefix(e.target.value)}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded border-gray-300 focus:border-[#39705E] focus:ring-1 focus:ring-[#39705E] outline-none transition-all"
           disabled={isGenerating}
         >
           {prefixOptions.map((option) => (
@@ -129,7 +129,7 @@ export default function ImageGenerator() {
           type="text"
           value={customText}
           onChange={(e) => setCustomText(e.target.value)}
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded border-gray-300 focus:border-[#39705E] focus:ring-1 focus:ring-[#39705E] outline-none transition-all"
           placeholder="Skriv din text här..."
           disabled={isGenerating}
         />
@@ -149,7 +149,7 @@ export default function ImageGenerator() {
           />
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="w-full p-2 border rounded bg-white hover:bg-gray-50"
+            className="w-full p-2 border border-[#39705E] rounded text-[#39705E] hover:bg-[#39705E]/10 transition-all"
           >
             {selectedImage ? 'Byt bild' : 'Välj bild'}
           </button>
@@ -166,7 +166,7 @@ export default function ImageGenerator() {
       <button
         onClick={generateImage}
         disabled={isGenerating || !customText.trim() || !selectedImage}
-        className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+        className="w-full bg-[#39705E] text-white py-2 px-4 rounded hover:bg-[#39705E]/90 disabled:bg-[#39705E]/50 disabled:cursor-not-allowed transition-all"
       >
         {isGenerating ? 'Genererar...' : 'Generera bild'}
       </button>
