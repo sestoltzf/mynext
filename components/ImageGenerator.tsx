@@ -88,7 +88,7 @@ export default function ImageGenerator() {
                 : 'border-gray-200 hover:bg-gray-50'
             }`}
           >
-            1920x1080
+            1920x1080 (stående format)
           </button>
           <button
             onClick={() => setSelectedFormat('square')}
@@ -98,7 +98,7 @@ export default function ImageGenerator() {
                 : 'border-gray-200 hover:bg-gray-50'
             }`}
           >
-            1080x1080
+            1080x1080 (kvadratiskt format)
           </button>
         </div>
       </div>
