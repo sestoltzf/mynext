@@ -8,7 +8,10 @@ const prefixOptions = [
   { value: 'min-nasta-utmaning', label: 'Min nästa utmaning' },
 ];
 
-const TEMPLATE_ID = 'sneaky-birds-eat-lazily-1115';
+const TEMPLATES = {
+  landscape: 'sneaky-birds-eat-lazily-1115',
+  square: 'new-foxes-shiver-yearly-1756'
+};
 
 export default function ImageGenerator() {
   const [prefix, setPrefix] = useState(prefixOptions[0].value);
@@ -16,6 +19,7 @@ export default function ImageGenerator() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
+  const [selectedFormat, setSelectedFormat] = useState<'landscape' | 'square'>('landscape');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +37,7 @@ export default function ImageGenerator() {
     setIsGenerating(true);
     try {
       const requestData = {
-        template: TEMPLATE_ID,
+        template: TEMPLATES[selectedFormat],
         data: {
           "text.text": prefixOptions.find(opt => opt.value === prefix)?.label || prefix,
           "usertext.text": customText,
@@ -71,6 +75,34 @@ export default function ImageGenerator() {
 
   return (
     <div className="space-y-6">
+      <div>
+        <label className="block text-sm font-medium mb-2">
+          Välj format
+        </label>
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <button
+            onClick={() => setSelectedFormat('landscape')}
+            className={`p-4 border rounded text-center ${
+              selectedFormat === 'landscape' 
+                ? 'border-blue-500 bg-blue-50' 
+                : 'border-gray-200 hover:bg-gray-50'
+            }`}
+          >
+            1920x1080
+          </button>
+          <button
+            onClick={() => setSelectedFormat('square')}
+            className={`p-4 border rounded text-center ${
+              selectedFormat === 'square' 
+                ? 'border-blue-500 bg-blue-50' 
+                : 'border-gray-200 hover:bg-gray-50'
+            }`}
+          >
+            1080x1080
+          </button>
+        </div>
+      </div>
+
       <div>
         <label className="block text-sm font-medium mb-2">
           Välj inledning
