@@ -139,10 +139,13 @@ export default function ImageGenerator() {
         <label className="block text-sm font-medium mb-2">
           Välj bild
         </label>
+        <p className="text-sm text-gray-600 mb-3">
+          Max filstorlek: 10MB. Rekommenderade format: JPG, PNG, WEBP.
+        </p>
         <div className="flex flex-col gap-2">
           <input
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp"
             onChange={handleImageChange}
             ref={fileInputRef}
             className="hidden"
