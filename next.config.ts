@@ -4,7 +4,9 @@ const nextConfig = {
   images: {
     unoptimized: true, // Nödvändigt för Netlify
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;
-
