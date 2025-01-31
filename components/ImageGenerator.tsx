@@ -26,6 +26,15 @@ interface RaceDetails {
   distance: string;
 }
 
+interface TemplateData {
+  'text.text'?: string;
+  'usertext.text'?: string;
+  'Huvudbild.src'?: string;
+  'racename.text'?: string;
+  'racedate.text'?: string;
+  'distance.text'?: string;
+}
+
 export default function ImageGenerator() {
   const [prefix, setPrefix] = useState(prefixOptions[0].value);
   const [customText, setCustomText] = useState('');
@@ -54,12 +63,8 @@ export default function ImageGenerator() {
   const generateImage = async () => {
     setIsGenerating(true);
     try {
-      let templateData: Record<string, any> = {
-        "text": prefixOptions.find(opt => opt.value === prefix)?.label || prefix,
-        "usertext": customText,
-        "Huvudbild": selectedImage || undefined
-      };
-
+      let templateData: TemplateData = {};
+      
       if (prefix === 'lopp') {
         const formattedDate = new Date(raceDetails.date).toLocaleDateString('sv-SE', {
           year: 'numeric',
@@ -68,10 +73,17 @@ export default function ImageGenerator() {
         });
         
         templateData = {
-          ...templateData,
-          "racename": raceDetails.name,
-          "racedate": formattedDate,
-          "distance": raceDetails.distance
+          "text.text": prefixOptions.find(opt => opt.value === prefix)?.label || prefix,
+          "Huvudbild.src": selectedImage || undefined,
+          "racename.text": raceDetails.name,
+          "racedate.text": formattedDate,
+          "distance.text": raceDetails.distance
+        };
+      } else {
+        templateData = {
+          "text.text": prefixOptions.find(opt => opt.value === prefix)?.label || prefix,
+          "usertext.text": customText,
+          "Huvudbild.src": selectedImage || undefined
         };
       }
 
@@ -262,8 +274,8 @@ export default function ImageGenerator() {
         <div className="mt-6">
           <h3 className="text-lg font-medium mb-2">Din genererade bild:</h3>
           <img 
-            src={generatedImageUrl} 
-            alt="Genererad bild" 
+            src={generatedImageUrl}
+            alt="Genererad bild"
             className="w-full rounded shadow"
           />
         </div>
