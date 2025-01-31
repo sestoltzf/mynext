@@ -6,7 +6,7 @@ const prefixOptions = [
   { value: 'mitt-nasta-ar', label: 'Mitt nästa är' },
   { value: 'nasta-steg', label: 'Nästa steg tar du själv' },
   { value: 'min-nasta-utmaning', label: 'Min nästa utmaning' },
-  { value: 'lopp', label: 'Jag tränar mot' },
+  { value: 'lopp', label: 'Träningen är igång mot' },
 ];
 
 const TEMPLATES = {
