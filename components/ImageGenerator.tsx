@@ -6,12 +6,25 @@ const prefixOptions = [
   { value: 'mitt-nasta-ar', label: 'Mitt nästa är' },
   { value: 'nasta-steg', label: 'Nästa steg tar du själv' },
   { value: 'min-nasta-utmaning', label: 'Min nästa utmaning' },
+  { value: 'lopp', label: 'Jag tränar mot' },
 ];
 
 const TEMPLATES = {
-  landscape: 'sneaky-birds-eat-lazily-1115',
-  square: 'new-foxes-shiver-yearly-1756'
+  standard: {
+    landscape: 'sneaky-birds-eat-lazily-1115',
+    square: 'new-foxes-shiver-yearly-1756'
+  },
+  race: {
+    landscape: 'nasty-foxes-drink-angrily-1990',
+    square: 'bizarre-werewolves-whisper-loosely-1520'
+  }
 };
+
+interface RaceDetails {
+  name: string;
+  date: string;
+  distance: string;
+}
 
 export default function ImageGenerator() {
   const [prefix, setPrefix] = useState(prefixOptions[0].value);
@@ -20,6 +33,11 @@ export default function ImageGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
   const [selectedFormat, setSelectedFormat] = useState<'landscape' | 'square'>('landscape');
+  const [raceDetails, setRaceDetails] = useState<RaceDetails>({
+    name: '',
+    date: '',
+    distance: ''
+  });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,13 +54,30 @@ export default function ImageGenerator() {
   const generateImage = async () => {
     setIsGenerating(true);
     try {
+      let templateData: Record<string, any> = {
+        "text": prefixOptions.find(opt => opt.value === prefix)?.label || prefix,
+        "usertext": customText,
+        "Huvudbild": selectedImage || undefined
+      };
+
+      if (prefix === 'lopp') {
+        const formattedDate = new Date(raceDetails.date).toLocaleDateString('sv-SE', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+        
+        templateData = {
+          ...templateData,
+          "racename": raceDetails.name,
+          "racedate": formattedDate,
+          "distance": raceDetails.distance
+        };
+      }
+
       const requestData = {
-        template: TEMPLATES[selectedFormat],
-        data: {
-          "text.text": prefixOptions.find(opt => opt.value === prefix)?.label || prefix,
-          "usertext.text": customText,
-          "Huvudbild.src": selectedImage || undefined
-        }
+        template: TEMPLATES[prefix === 'lopp' ? 'race' : 'standard'][selectedFormat],
+        data: templateData
       };
       
       console.log('Sending request:', requestData);
@@ -121,19 +156,62 @@ export default function ImageGenerator() {
         </select>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium mb-2">
-          Din text
-        </label>
-        <input
-          type="text"
-          value={customText}
-          onChange={(e) => setCustomText(e.target.value)}
-          className="w-full p-2 border rounded border-gray-300 focus:border-[#39705E] focus:ring-1 focus:ring-[#39705E] outline-none transition-all"
-          placeholder="Skriv din text här..."
-          disabled={isGenerating}
-        />
-      </div>
+      {prefix === 'lopp' ? (
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Loppets namn
+            </label>
+            <input
+              type="text"
+              value={raceDetails.name}
+              onChange={(e) => setRaceDetails(prev => ({...prev, name: e.target.value}))}
+              className="w-full p-2 border rounded border-gray-300 focus:border-[#39705E] focus:ring-1 focus:ring-[#39705E] outline-none transition-all"
+              placeholder="t.ex. Stockholm Marathon"
+              disabled={isGenerating}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Datum
+            </label>
+            <input
+              type="date"
+              value={raceDetails.date}
+              onChange={(e) => setRaceDetails(prev => ({...prev, date: e.target.value}))}
+              className="w-full p-2 border rounded border-gray-300 focus:border-[#39705E] focus:ring-1 focus:ring-[#39705E] outline-none transition-all"
+              disabled={isGenerating}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Distans
+            </label>
+            <input
+              type="text"
+              value={raceDetails.distance}
+              onChange={(e) => setRaceDetails(prev => ({...prev, distance: e.target.value}))}
+              className="w-full p-2 border rounded border-gray-300 focus:border-[#39705E] focus:ring-1 focus:ring-[#39705E] outline-none transition-all"
+              placeholder="t.ex. 42.2 km"
+              disabled={isGenerating}
+            />
+          </div>
+        </div>
+      ) : (
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Din text
+          </label>
+          <input
+            type="text"
+            value={customText}
+            onChange={(e) => setCustomText(e.target.value)}
+            className="w-full p-2 border rounded border-gray-300 focus:border-[#39705E] focus:ring-1 focus:ring-[#39705E] outline-none transition-all"
+            placeholder="Skriv din text här..."
+            disabled={isGenerating}
+          />
+        </div>
+      )}
 
       <div>
         <label className="block text-sm font-medium mb-2">
@@ -168,7 +246,13 @@ export default function ImageGenerator() {
 
       <button
         onClick={generateImage}
-        disabled={isGenerating || !customText.trim() || !selectedImage}
+        disabled={
+          isGenerating || 
+          !selectedImage || 
+          (prefix === 'lopp' 
+            ? (!raceDetails.name || !raceDetails.date || !raceDetails.distance)
+            : !customText.trim())
+        }
         className="w-full bg-[#39705E] text-white py-2 px-4 rounded hover:bg-[#39705E]/90 disabled:bg-[#39705E]/50 disabled:cursor-not-allowed transition-all"
       >
         {isGenerating ? 'Genererar...' : 'Generera bild'}
